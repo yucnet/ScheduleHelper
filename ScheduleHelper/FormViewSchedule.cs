@@ -1,0 +1,461 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace ScheduleHelper
+{
+    public partial class FormViewSchedule : Form
+    {
+        //所有的课表信息都缓存在该对象中
+        private Schedule schedule;
+        //晚自习课表
+        private Schedule nightSchedule;
+        //当前班级ID(从0开始)
+        private int currentClassID;
+        private OperationState operationState;  //当前操作状态
+        private bool hold = false;  //是否持有一节课.
+        private int holdCellRowIndex, holdCellColumnIndex; //持有的单元格行列号
+        private int currentCellRowIndex, currentCellColumnIndex; //鼠标所在单元格的行列号
+        private List<int> classList;
+        private DataGridViewCellStyle lockedStyle;
+        private int firstConflictClassID;   //第一个有冲突的班级ID
+        private DataGridViewCellStyle styleForeColorRed;
+        private bool night = false;
+        private bool holdNight = false;
+        private int section;
+
+        public FormViewSchedule()
+        {
+            InitializeComponent();
+            Initialize();
+        }
+
+        public void Initialize()
+        {
+            styleForeColorRed = new DataGridViewCellStyle();
+            styleForeColorRed.ForeColor = Color.Red;
+            schedule = new Schedule(StaticSQLiteHelper.GetSchedule());
+            nightSchedule = new Schedule(StaticSQLiteHelper.GetNightSchedule());
+            dgv.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            TestConflict();
+
+            lockedStyle = new DataGridViewCellStyle();
+            lockedStyle.BackColor = dgv.DefaultCellStyle.SelectionBackColor;
+            lockedStyle.ForeColor = dgv.DefaultCellStyle.SelectionForeColor;
+            
+
+            LoadClassList();
+
+            adjustDataGridViewStyle();
+
+            loadClassSchedule(0);
+
+            rbExchange.Checked = true;
+
+
+
+
+        }
+
+        /// <summary>
+        /// 调整DataGridView的样式和格式
+        /// </summary>
+        private void adjustDataGridViewStyle()
+        {
+            string[] weekDays = new string[] { "星期一", "星期二", "星期三", "星期四", "星期五", "星期六", "星期天" };
+            for (int i = 0; i < Global.DayPerWeek; i++)
+            {
+                dgv.Columns.Add(weekDays[i], weekDays[i]);
+                dgv.Columns[i].Width = 80;
+                dgv.Columns[i].SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
+            //增加白天课程
+            for (int i = 0; i < Global.LessonPerDay; i++)
+            {
+                dgv.Rows.Add();
+                dgv.Rows[i].HeaderCell.Value = (i + 1).ToString();
+                dgv.Rows[i].Height = 30;
+                dgv.Rows[i].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
+            //增加晚自习
+            for (int i = 0; i < Global.NightLessonPerDay; i++)
+            {
+                dgv.Rows.Add();
+                dgv.Rows[i+Global.LessonPerDay].HeaderCell.Value = (i + 1).ToString();
+                dgv.Rows[i + Global.LessonPerDay].Height = 30;
+                dgv.Rows[i + Global.LessonPerDay].HeaderCell.Style.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            }
+
+            dgv.RowHeadersWidth = 46;
+            dgv.RowHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgv.RowHeadersDefaultCellStyle.Font = new Font("Times New Roman", 9, FontStyle.Bold);
+            dgv.RowsDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgv.ColumnHeadersHeight = 30;
+            dgv.ColumnHeadersDefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dgv.ColumnHeadersDefaultCellStyle.Font = new Font("宋体", 9, FontStyle.Bold);
+            dgv.Rows[Global.LessonPerForenoon - 1].DividerHeight = 3;
+            dgv.Rows[Global.LessonPerDay - 1].DividerHeight = 3;
+        }
+
+
+
+
+        /// <summary>
+        /// 添加班级列表的链接
+        /// </summary>
+        public void LoadClassList()
+        {
+            classList = new List<int>();
+            foreach (ClassSchedule cs in schedule)
+            {
+                classList.Add(cs.ClassID + 1);
+            }
+            foreach(int ci in classList)
+            {
+                LinkLabel ll = new LinkLabel();
+                ll.Text = ci.ToString() + "班";
+                ll.Size = new Size(30, 20);
+                ll.Click += new EventHandler((obj, eve) =>
+                {
+                    currentClassID = ci-1;
+                    loadClassSchedule(currentClassID);
+                });
+                ll.Visible = true;
+                ll.Location = new Point(46 * ((ci-1)%15)+40, 20*((ci-1)/15)+30);
+                groupBox1.Controls.Add(ll);
+                
+            }
+        }
+
+
+
+        /// <summary>
+        /// 根据传入的班级ID载入班级课表,班级ID从0开始
+        /// </summary>
+        /// <param name="classID"></param>
+        private void loadClassSchedule(int classID)
+        {
+            hold = false;
+
+            Lesson l;
+            for (int ri = 0; ri <Global.LessonPerDay; ri++)
+            {
+                for (int ci = 0; ci < Global.DayPerWeek; ci++)
+                {
+                    l = schedule[currentClassID][ci][ri];
+                    dgv.Rows[ri].Cells[ci].Value = l.ShortSubjectName;
+                    dgv.Rows[ri].Cells[ci].ToolTipText = l.TeacherName;
+                    //dgv.Rows[ri].Cells[ci].ContextMenuStrip = cmsMenu;
+                    if (l.Conflict)
+                    {
+                        dgv.Rows[ri].Cells[ci].Style = styleForeColorRed;
+                    }
+                    else
+                    {
+                        dgv.Rows[ri].Cells[ci].Style = dgv.DefaultCellStyle;
+                    }
+                }
+            }
+
+            for (int ri = 0; ri < Global.NightLessonPerDay; ri++)
+            {
+                for (int ci = 0; ci < Global.DayPerWeek; ci++)
+                {
+                    l = nightSchedule[currentClassID][ci][ri];
+                    dgv.Rows[ri+Global.LessonPerDay].Cells[ci].Value = l.ShortSubjectName;
+                    dgv.Rows[ri+Global.LessonPerDay].Cells[ci].ToolTipText = l.TeacherName;
+                    if (l.Conflict)
+                    {
+                        dgv.Rows[ri].Cells[ci].Style = styleForeColorRed;
+                    }
+                    else
+                    {
+                        dgv.Rows[ri].Cells[ci].Style = dgv.DefaultCellStyle;
+                    }
+                }
+            }
+
+            loadContextMenuItems();
+            this.Text = (classID + 1).ToString() + "班课表";
+        }
+ 
+        public enum OperationState
+        { 
+            None=0,
+            ExchangeMode=1,
+            ReforceMode=2
+        }
+
+        private void rbExchange_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbExchange.Checked)
+            {
+                operationState = OperationState.ExchangeMode;
+            }
+        }
+
+        private void rbReforce_CheckedChanged(object sender, EventArgs e)
+        {
+            if (rbReforce.Checked)
+            {
+                operationState = OperationState.ReforceMode;
+            }
+        }
+
+
+        private void dgv_CellMouseClick(object sender, DataGridViewCellMouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                if (e.RowIndex < Global.LessonPerDay)
+                {
+                    night = false;
+                    section = e.RowIndex;
+                }
+                else
+                {
+                    night = true;
+                    section = e.RowIndex - Global.LessonPerDay;
+                }
+
+
+                if (operationState == OperationState.ExchangeMode)
+                {
+                    if (hold)
+                    {
+                        //如果要交换的两节课为同一门课或者要交换的两节课一节是白天一节是晚自习,都返回失败
+                        if( (e.RowIndex == holdCellRowIndex && e.ColumnIndex == holdCellColumnIndex)||(e.RowIndex-Global.LessonPerDay == holdCellRowIndex && e.ColumnIndex == holdCellColumnIndex) ||(night!=holdNight))
+                        {
+                            setHoldState(false);
+                            tslExchange.Text = "不能更换";
+                        }
+                        else
+                        {
+                            if (night)
+                            {
+                                //交换缓存的课程表中的数据
+                                nightSchedule[currentClassID].Exchange2Lesson(e.ColumnIndex, section, holdCellColumnIndex, holdCellRowIndex);
+                                //更新数据库中数据
+                                StaticSQLiteHelper.Exchange2NightLesson(currentClassID, e.ColumnIndex, section, holdCellColumnIndex, holdCellRowIndex);
+                            }
+                            else
+                            {
+                                //交换缓存的课程表中的数据
+                                schedule[currentClassID].Exchange2Lesson(e.ColumnIndex, section, holdCellColumnIndex, holdCellRowIndex);
+                                //更新数据库中数据
+                                StaticSQLiteHelper.Exchange2Lesson(currentClassID,e.ColumnIndex, section, holdCellColumnIndex, holdCellRowIndex);
+                            }
+                                //重新加载以刷新界面
+                            loadClassSchedule(currentClassID);
+
+                            setHoldState(false);
+
+                            TestConflict();
+                        }
+                    }
+                    else
+                    {
+                        setHoldState(true);
+                    }
+                }
+                else if (operationState == OperationState.ReforceMode)
+                {
+                    selectCell(e.RowIndex, e.ColumnIndex, true);
+                    cmsMenu.Show(dgv, e.X + dgv.CurrentCell.Size.Width * e.ColumnIndex+dgv.RowHeadersWidth, e.Y + dgv.CurrentCell.Size.Height * e.RowIndex+dgv.ColumnHeadersHeight);
+                 }
+
+            }
+
+
+
+        }
+
+        private void TestConflict()
+        {
+            schedule.GenericTeacherSchedule();
+            //返回第一个有冲突的班级ID
+            firstConflictClassID = this.schedule.ConflictClassID;
+            if (firstConflictClassID == -1)
+            {
+                tslConflict.Text = "没有任何冲突课程";
+            }
+            else
+            {
+                tslConflict.Text = string.Format("{0}班课程有冲突", firstConflictClassID+1);
+            }
+        }
+
+        /// <summary>
+        /// 选中指定行列号的cell
+        /// </summary>
+        /// <param name="ri">行号（从0开始）</param>
+        /// <param name="ci">列号（从0开始）</param>
+        /// <param name="unselectOthers">是否反选其它cell</param>
+        private void selectCell(int ri,int ci,bool unselectOthers)
+        {
+            if (unselectOthers)
+            {
+                unselectAll();
+            }
+            dgv.Rows[ri].Cells[ci].Selected = true;
+        
+        }
+
+        /// <summary>
+        /// 反选所有的cell
+        /// </summary>
+        private void unselectAll()
+        {
+            foreach (DataGridViewCell cell in dgv.SelectedCells)
+            {
+                cell.Selected = false;
+            }
+        
+        }
+        /// <summary>
+        /// 重置指定单元格样式
+        /// </summary>
+        /// <param name="ri">行号（从0开始）</param>
+        /// <param name="ci">列号（从0开始）</param>
+        private void resetCellStyle(int ri, int ci)
+        {
+            dgv.Rows[ri].Cells[ci].Style = dgv.DefaultCellStyle;
+        }
+
+        /// <summary>
+        /// 将指定单元格设置为选中的样式
+        /// </summary>
+        /// <param name="ri">行号（从0开始）</param>
+        /// <param name="ci">列号（从0开始）</param>
+        private void setLockedStyle(int ri, int ci)
+        {
+            dgv.Rows[ri].Cells[ci].Style = lockedStyle;
+        }
+
+        private void dgv_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            currentCellRowIndex = e.RowIndex;
+            currentCellColumnIndex = e.ColumnIndex;
+        }
+
+        private void cmsMenu_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            bool night = false;
+            int section;
+            string sn = e.ClickedItem.Text;
+            int dow = currentCellColumnIndex;
+            if (currentCellRowIndex >= Global.LessonPerDay)
+            {
+                night = true;
+                section = currentCellRowIndex - Global.LessonPerDay;
+            }
+            else
+            {
+                night = false;
+                section = currentCellRowIndex;
+            }
+            int ti = (int)e.ClickedItem.Tag;
+            if (night)
+            {
+                StaticSQLiteHelper.ReforceSetNightLesson(currentClassID, dow, section, ti);
+            }
+            else
+            {
+                StaticSQLiteHelper.ReforceSetLesson(currentClassID, dow, section, ti);
+            }
+
+            if (ti == 0)
+            {
+                dgv.Rows[currentCellRowIndex].Cells[currentCellColumnIndex].Value = "";
+            }
+            else
+            {
+                dgv.Rows[currentCellRowIndex].Cells[currentCellColumnIndex].Value = sn.Substring(0, 1);
+            }
+
+
+        }
+
+        private void dgv_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            Lesson l;
+            if (e.RowIndex < Global.LessonPerDay)
+            {
+                l = schedule[currentClassID][e.ColumnIndex][e.RowIndex];
+            }
+            else
+            {
+                l = nightSchedule[currentClassID][e.ColumnIndex][e.RowIndex - Global.LessonPerDay];
+            }
+            int teacherID = l.TeacherID;
+            string teacherName = l.TeacherName;
+            if (teacherID == 0)
+            {
+                return;
+            }
+            FormViewTeacherSchedule fvts = new FormViewTeacherSchedule(teacherID,teacherName);
+            fvts.ShowDialog();
+        }
+
+        private void loadContextMenuItems()
+        {
+            cmsMenu.Items.Clear();
+            foreach (ClassSubjectSetting css in Global.GradeSubjectSetting[currentClassID])
+            {
+                var item=cmsMenu.Items.Add(css.SubjectName);
+                item.Tag = css.TeacherID;
+                if (css.Master)
+                {
+                    item.ForeColor = Color.Red;
+                }
+            }
+            //增加"自习"选项
+            var xitem = cmsMenu.Items.Add("自习");
+            xitem.Tag = 0;
+        }
+
+        private void setHoldState(bool state)
+        {
+            if (state)
+            {
+                hold = true;
+                //改变鼠标样式
+                dgv.Cursor = Cursors.Hand;
+                //缓存持有的课程坐标
+                holdCellColumnIndex = currentCellColumnIndex;
+                if (currentCellRowIndex < Global.LessonPerDay)
+                {
+                    holdNight = false;
+                    holdCellRowIndex = currentCellRowIndex;
+                    tslExchange.Text = dgv.Rows[currentCellRowIndex].Cells[currentCellColumnIndex].Value.ToString();
+                }
+                else
+                {
+                    holdNight = true;
+                    holdCellRowIndex = currentCellRowIndex - Global.LessonPerDay;
+                    tslExchange.Text = dgv.Rows[currentCellRowIndex].Cells[currentCellColumnIndex].Value.ToString() + "[晚]";
+                }
+                selectCell(currentCellRowIndex, currentCellColumnIndex, true);
+                //更新界面
+                
+            }
+            else
+            {
+                hold = false;
+                holdNight = false;
+                unselectAll();
+                dgv.Cursor = Cursors.Default;
+                tslExchange.Text = "更换成功";
+            }
+        }
+
+
+    }
+}
