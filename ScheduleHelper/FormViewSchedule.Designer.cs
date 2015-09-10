@@ -29,8 +29,8 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle1 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle2 = new System.Windows.Forms.DataGridViewCellStyle();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FormViewSchedule));
             this.dgv = new System.Windows.Forms.DataGridView();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -43,6 +43,8 @@
             this.toolStripSplitButton1 = new System.Windows.Forms.ToolStripSplitButton();
             this.tslExchange = new System.Windows.Forms.ToolStripStatusLabel();
             this.cmsMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.btnCancle = new System.Windows.Forms.Button();
+            this.clbHistory = new System.Windows.Forms.CheckedListBox();
             ((System.ComponentModel.ISupportInitialize)(this.dgv)).BeginInit();
             this.groupBox2.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -55,29 +57,29 @@
             this.dgv.AllowUserToResizeColumns = false;
             this.dgv.AllowUserToResizeRows = false;
             this.dgv.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
-            dataGridViewCellStyle3.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle3.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle3.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle1.Font = new System.Drawing.Font("微软雅黑", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle1.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             this.dgv.ColumnHeadersHeight = 41;
             this.dgv.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
             this.dgv.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dgv.Location = new System.Drawing.Point(12, 12);
             this.dgv.Name = "dgv";
             this.dgv.ReadOnly = true;
-            dataGridViewCellStyle4.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = System.Drawing.SystemColors.Control;
-            dataGridViewCellStyle4.Font = new System.Drawing.Font("宋体", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            dataGridViewCellStyle4.ForeColor = System.Drawing.SystemColors.WindowText;
-            dataGridViewCellStyle4.NullValue = "未指定";
-            dataGridViewCellStyle4.SelectionBackColor = System.Drawing.SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = System.Drawing.SystemColors.Control;
+            dataGridViewCellStyle2.Font = new System.Drawing.Font("宋体", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            dataGridViewCellStyle2.ForeColor = System.Drawing.SystemColors.WindowText;
+            dataGridViewCellStyle2.NullValue = "未指定";
+            dataGridViewCellStyle2.SelectionBackColor = System.Drawing.SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = System.Drawing.SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.dgv.RowHeadersDefaultCellStyle = dataGridViewCellStyle2;
             this.dgv.RowHeadersWidth = 60;
             this.dgv.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgv.RowTemplate.Height = 23;
@@ -92,7 +94,7 @@
             // 
             this.groupBox1.Location = new System.Drawing.Point(12, 416);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(790, 86);
+            this.groupBox1.Size = new System.Drawing.Size(668, 86);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "班级列表";
@@ -101,9 +103,9 @@
             // 
             this.groupBox2.Controls.Add(this.rbReforce);
             this.groupBox2.Controls.Add(this.rbExchange);
-            this.groupBox2.Location = new System.Drawing.Point(686, 15);
+            this.groupBox2.Location = new System.Drawing.Point(696, 15);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(115, 394);
+            this.groupBox2.Size = new System.Drawing.Size(289, 51);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "操作";
@@ -111,7 +113,7 @@
             // rbReforce
             // 
             this.rbReforce.AutoSize = true;
-            this.rbReforce.Location = new System.Drawing.Point(14, 86);
+            this.rbReforce.Location = new System.Drawing.Point(206, 20);
             this.rbReforce.Name = "rbReforce";
             this.rbReforce.Size = new System.Drawing.Size(71, 16);
             this.rbReforce.TabIndex = 1;
@@ -123,7 +125,7 @@
             // rbExchange
             // 
             this.rbExchange.AutoSize = true;
-            this.rbExchange.Location = new System.Drawing.Point(14, 35);
+            this.rbExchange.Location = new System.Drawing.Point(51, 20);
             this.rbExchange.Name = "rbExchange";
             this.rbExchange.Size = new System.Drawing.Size(71, 16);
             this.rbExchange.TabIndex = 0;
@@ -141,7 +143,7 @@
             this.tslExchange});
             this.statusStrip.Location = new System.Drawing.Point(0, 506);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(811, 22);
+            this.statusStrip.Size = new System.Drawing.Size(997, 22);
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -181,11 +183,33 @@
             this.cmsMenu.Size = new System.Drawing.Size(61, 4);
             this.cmsMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.cmsMenu_ItemClicked);
             // 
+            // btnCancle
+            // 
+            this.btnCancle.Location = new System.Drawing.Point(696, 83);
+            this.btnCancle.Name = "btnCancle";
+            this.btnCancle.Size = new System.Drawing.Size(111, 23);
+            this.btnCancle.TabIndex = 4;
+            this.btnCancle.Text = "撤销";
+            this.btnCancle.UseVisualStyleBackColor = true;
+            this.btnCancle.Click += new System.EventHandler(this.btnCancle_Click);
+            // 
+            // clbHistory
+            // 
+            this.clbHistory.CheckOnClick = true;
+            this.clbHistory.FormattingEnabled = true;
+            this.clbHistory.Location = new System.Drawing.Point(698, 112);
+            this.clbHistory.Name = "clbHistory";
+            this.clbHistory.Size = new System.Drawing.Size(287, 388);
+            this.clbHistory.TabIndex = 5;
+            this.clbHistory.ItemCheck += new System.Windows.Forms.ItemCheckEventHandler(this.clbHistory_ItemCheck);
+            // 
             // FormViewSchedule
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(811, 528);
+            this.ClientSize = new System.Drawing.Size(997, 528);
+            this.Controls.Add(this.clbHistory);
+            this.Controls.Add(this.btnCancle);
             this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
@@ -215,5 +239,7 @@
         private System.Windows.Forms.ToolStripSplitButton toolStripSplitButton1;
         private System.Windows.Forms.ToolStripStatusLabel tslExchange;
         private System.Windows.Forms.ContextMenuStrip cmsMenu;
+        private System.Windows.Forms.Button btnCancle;
+        private System.Windows.Forms.CheckedListBox clbHistory;
     }
 }

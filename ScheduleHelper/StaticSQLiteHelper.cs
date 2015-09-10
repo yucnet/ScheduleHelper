@@ -166,53 +166,40 @@ namespace ScheduleHelper
         public static void Exchange2Lesson(int currentClassID, int firstDayOfWeek, int firstSection, int secondDayOfWeek, int secondSection)
         {
             int _firstTeacherID, _secondTeacherID;
+            string history_sql, description;
             //查找第一个教师的ID号
             string sql = string.Format("select teacher_id from schedule where class_id={0} and day_of_week={1} and section={2};", currentClassID, firstDayOfWeek, firstSection);
-            _firstTeacherID =Convert.ToInt32(ExecuteScalar(sql));
-            //保存修改记录
-            sql = string.Format("insert into history(time,sql) values('{0}','update schedule set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
-                DateTime.Now.ToLongTimeString(),_firstTeacherID, currentClassID, firstDayOfWeek, firstSection);
-            ExecuteNonQuery(sql);
+            _firstTeacherID = Convert.ToInt32(ExecuteScalar(sql));
+
+            //记录第一次修改.
+            history_sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _firstTeacherID, currentClassID, firstDayOfWeek, firstSection);
+            
+
             //查找第二位教师ID
             sql = string.Format("select teacher_id from schedule where class_id={0} and day_of_week={1} and section={2};", currentClassID, secondDayOfWeek, secondSection);
             _secondTeacherID = Convert.ToInt32(ExecuteScalar(sql));
-            //保存修改记录
-            sql = string.Format("insert into history(time,sql) values('{0}','update schedule set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
-                DateTime.Now.ToLongTimeString(),_secondTeacherID, currentClassID, secondDayOfWeek, secondSection);
-            ExecuteNonQuery(sql);
-            //第一位教师的课换成第二位(将第一位教师的ID换成第二位教师的ID)
+
+            history_sql += string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _secondTeacherID, currentClassID, secondDayOfWeek, secondSection);
+
+             //第一位教师的课换成第二位(将第一位教师的ID换成第二位教师的ID)
             sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _secondTeacherID, currentClassID, firstDayOfWeek, firstSection);
             ExecuteNonQuery(sql);
+
             //第二位教师的课换成第一位教师
             sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _firstTeacherID, currentClassID, secondDayOfWeek, secondSection);
             ExecuteNonQuery(sql);
+
+            description = string.Format("{0}班 星期{1} 第{2}节 与 星期{3} 第{4}节 调换",currentClassID+1,firstDayOfWeek+1,firstSection+1,secondDayOfWeek+1,secondSection+1);
+
+            //将记录保留下来
+            sql = string.Format("insert into history(time,sql,description) values('{0}','{1}','{2}');",System.DateTime.Now.ToString("f"),history_sql,description);
+            ExecuteNonQuery(sql);
+
+
         }
-        public static void Exchange2NightLesson(int currentClassID, int firstDayOfWeek, int firstSection, int secondDayOfWeek, int secondSection)
+        public static void ReforceSetLesson(int classID, int dayOfWeek, int section, int teacherID)
         {
-            int _firstTeacherID, _secondTeacherID;
-            //查找第一个教师的ID号
-            string sql = string.Format("select teacher_id from night where class_id={0} and day_of_week={1} and section={2};", currentClassID, firstDayOfWeek, firstSection);
-            _firstTeacherID = Convert.ToInt32(ExecuteScalar(sql));
-            //保存修改记录
-            sql = string.Format("insert into history(time,sql) values('{0}','update night set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
-                DateTime.Now.ToLongTimeString(), _firstTeacherID, currentClassID, firstDayOfWeek, firstSection);
-            ExecuteNonQuery(sql);
-            //查找第二位教师ID
-            sql = string.Format("select teacher_id from night where class_id={0} and day_of_week={1} and section={2};", currentClassID, secondDayOfWeek, secondSection);
-            _secondTeacherID = Convert.ToInt32(ExecuteScalar(sql));
-            //保存修改记录
-            sql = string.Format("insert into history(time,sql) values('{0}','update night set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
-                DateTime.Now.ToLongTimeString(), _secondTeacherID, currentClassID, secondDayOfWeek, secondSection);
-            ExecuteNonQuery(sql);
-            //第一位教师的课换成第二位(将第一位教师的ID换成第二位教师的ID)
-            sql = string.Format("update night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _secondTeacherID, currentClassID, firstDayOfWeek, firstSection);
-            ExecuteNonQuery(sql);
-            //第二位教师的课换成第一位教师
-            sql = string.Format("update night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _firstTeacherID, currentClassID, secondDayOfWeek, secondSection);
-            ExecuteNonQuery(sql);
-        }
-        public static void ReforceSetLesson(int classID,int dayOfWeek,int section,int teacherID)
-        {
+            string history_sql,description;
             //查找原来教师的ID
             string sql = string.Format("select teacher_id from schedule where class_id={0} and day_of_week={1} and section={2};", classID, dayOfWeek, section);
             int oldTeacherID = Convert.ToInt32(ExecuteScalar(sql));
@@ -221,15 +208,97 @@ namespace ScheduleHelper
             sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3}", teacherID, classID, dayOfWeek, section);
             ExecuteNonQuery(sql);
 
+            //登记修改前的信息以便于恢复
+            history_sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", oldTeacherID, classID, dayOfWeek, section);
+            description = string.Format("[强制指定]{0}班 星期{1} 第{2}节",classID,dayOfWeek,section);
+
             //插入修改记录
-            sql = string.Format("insert into history(time,sql) values('{0}','update schedule set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
-            DateTime.Now.ToLongTimeString(), oldTeacherID, classID, dayOfWeek, section);
+            sql = string.Format("insert into history(time,sql,description) values('{0}','{1}','{2}');", DateTime.Now.ToString("f"), history_sql, description);
+            ExecuteNonQuery(sql);
+        }
+        public static void Exchange2NightLesson(int currentClassID, int firstDayOfWeek, int firstSection, int secondDayOfWeek, int secondSection)
+        {
+            int _firstTeacherID, _secondTeacherID;
+            string history_sql, description;
+            //查找第一个教师的ID号
+            string sql = string.Format("select teacher_id from night where class_id={0} and day_of_week={1} and section={2};", currentClassID, firstDayOfWeek, firstSection);
+            _firstTeacherID = Convert.ToInt32(ExecuteScalar(sql));
+
+            //记录第一次修改.
+            history_sql = string.Format("update night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _firstTeacherID, currentClassID, firstDayOfWeek, firstSection);
+
+
+            //查找第二位教师ID
+            sql = string.Format("select teacher_id from night where class_id={0} and day_of_week={1} and section={2};", currentClassID, secondDayOfWeek, secondSection);
+            _secondTeacherID = Convert.ToInt32(ExecuteScalar(sql));
+
+            //保存修改记录
+            //history_sql += string.Format("insert into history(time,sql) values('{0}','update night set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
+            //   DateTime.Now.ToLongTimeString(), _secondTeacherID, currentClassID, secondDayOfWeek, secondSection);
+            //ExecuteNonQuery(sql);
+
+            history_sql += string.Format("update  night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _secondTeacherID, currentClassID, secondDayOfWeek, secondSection);
+
+
+            //第一位教师的课换成第二位(将第一位教师的ID换成第二位教师的ID)
+            sql = string.Format("update  night  set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _secondTeacherID, currentClassID, firstDayOfWeek, firstSection);
             ExecuteNonQuery(sql);
 
+            //第二位教师的课换成第一位教师
+            sql = string.Format("update  night  set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", _firstTeacherID, currentClassID, secondDayOfWeek, secondSection);
+            ExecuteNonQuery(sql);
+
+            description = string.Format("[晚自习]{0}班 星期{1} 第{2}节 与 星期{3} 第{4}节 调换", currentClassID + 1, firstDayOfWeek + 1, firstSection + 1, secondDayOfWeek + 1, secondSection + 1);
+
+            //将记录保留下来
+            sql = string.Format("insert into history(time,sql,description) values('{0}','{1}','{2}');", System.DateTime.Now.ToLongTimeString(), history_sql, description);
+            ExecuteNonQuery(sql);
+
+
         }
+        //public static void ReforceSetLesson(int classID,int dayOfWeek,int section,int teacherID)
+        //{
+        //    //查找原来教师的ID
+        //    string sql = string.Format("select teacher_id from schedule where class_id={0} and day_of_week={1} and section={2};", classID, dayOfWeek, section);
+        //    int oldTeacherID = Convert.ToInt32(ExecuteScalar(sql));
+
+        //    //修改教师ID
+        //    sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3}", teacherID, classID, dayOfWeek, section);
+        //    ExecuteNonQuery(sql);
+
+        //    //插入修改记录
+        //    sql = string.Format("insert into history(time,sql) values('{0}','update schedule set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
+        //    DateTime.Now.ToLongTimeString(), oldTeacherID, classID, dayOfWeek, section);
+        //    ExecuteNonQuery(sql);
+
+        //}
+
+        /// <summary>
+        /// 撤销一步操作
+        /// </summary>
+        public static string  Recovery()
+        {
+            DataTable dt= ExecuteQuery("select id, sql,description from history order by id desc limit 1");
+            if (dt.Rows.Count == 0)
+            {
+                return null;
+            }
+            int id = Convert.ToInt32(dt.Rows[0][0]);
+            string sql = dt.Rows[0][1].ToString();
+            string description = dt.Rows[0][2].ToString();
+            int rn = ExecuteNonQuery(sql);
+            if (rn != 0)
+            {
+                ExecuteQuery(string.Format("delete from history where id={0}", id));
+                return description;
+            }
+            return null;
+        }
+
 
         public static void ReforceSetNightLesson(int classID, int dayOfWeek, int section, int teacherID)
         {
+            string history_sql, description;
             //查找原来教师的ID
             string sql = string.Format("select teacher_id from night where class_id={0} and day_of_week={1} and section={2};", classID, dayOfWeek, section);
             int oldTeacherID = Convert.ToInt32(ExecuteScalar(sql));
@@ -238,19 +307,17 @@ namespace ScheduleHelper
             sql = string.Format("update night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3}", teacherID, classID, dayOfWeek, section);
             ExecuteNonQuery(sql);
 
+            //登记修改前的信息以便于恢复
+            history_sql = string.Format("update night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", oldTeacherID, classID, dayOfWeek, section);
+            description = string.Format("[强制指定 晚自习]{0}班 星期{1} 第{2}节", classID, dayOfWeek, section);
+
             //插入修改记录
-            sql = string.Format("insert into history(time,sql) values('{0}','update night set teacher_id={1} where class_id={2} and day_of_week={3} and section={4};')",
-            DateTime.Now.ToLongTimeString(), oldTeacherID, classID, dayOfWeek, section);
+            sql = string.Format("insert into history(time,sql,description) values('{0}','{1}','{2}');", DateTime.Now.ToString("f"), history_sql, description);
             ExecuteNonQuery(sql);
 
         }
 
 
-        //public static DataTable GetRequire()
-        //{
-        //    string sql = "select type,teacher_id,master,subject_name,class_id,day_of_week,section,predication,weight";
-
-        //}
 
         public static DataTable GetClassSchedule(int classID)
         {

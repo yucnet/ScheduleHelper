@@ -59,7 +59,7 @@ namespace ScheduleHelper
 
             rbExchange.Checked = true;
 
-
+            loadHistory();
 
 
         }
@@ -254,7 +254,7 @@ namespace ScheduleHelper
                             }
                                 //重新加载以刷新界面
                             loadClassSchedule(currentClassID);
-
+                            loadHistory();
                             setHoldState(false);
 
                             TestConflict();
@@ -362,6 +362,7 @@ namespace ScheduleHelper
                 section = currentCellRowIndex;
             }
             int ti = (int)e.ClickedItem.Tag;
+
             if (night)
             {
                 StaticSQLiteHelper.ReforceSetNightLesson(currentClassID, dow, section, ti);
@@ -380,6 +381,7 @@ namespace ScheduleHelper
                 dgv.Rows[currentCellRowIndex].Cells[currentCellColumnIndex].Value = sn.Substring(0, 1);
             }
 
+            loadHistory();
 
         }
 
@@ -454,6 +456,75 @@ namespace ScheduleHelper
                 dgv.Cursor = Cursors.Default;
                 tslExchange.Text = "更换成功";
             }
+        }
+
+        private void btnCancle_Click(object sender, EventArgs e)
+        {
+            //直接根据选中的项的数量来还原
+            string result = null;
+            int n = clbHistory.CheckedItems.Count;
+            for (int i = 0; i < n; i++)
+            { 
+                result=StaticSQLiteHelper.Recovery();
+            }
+
+            //string result=StaticSQLiteHelper.Recovery();
+            if (result == null)
+            {
+                MessageBox.Show("已经没有可以撤销的操作！");
+            }
+            else
+            {
+                //MessageBox.Show(result);
+
+                schedule = new Schedule(StaticSQLiteHelper.GetSchedule());
+                nightSchedule = new Schedule(StaticSQLiteHelper.GetNightSchedule());
+                loadClassSchedule(currentClassID);
+                loadHistory();
+            }
+
+        }
+        private void loadHistory()
+        {
+            clbHistory.Items.Clear();
+            DataTable dt = StaticSQLiteHelper.ExecuteQuery("select time,description from history order by id desc");
+            foreach (DataRow r in dt.Rows)
+            {
+                clbHistory.Items.Add(r[1]);
+            }
+            if(clbHistory.Items.Count!=0)
+            {
+                clbHistory.SetItemChecked(0, true);
+
+            }
+           
+        }
+
+        private void clbHistory_ItemCheck(object sender, ItemCheckEventArgs e)
+        {
+            clbHistory.ItemCheck -= new ItemCheckEventHandler(clbHistory_ItemCheck);
+            if (e.NewValue == CheckState.Unchecked)
+            {
+                e.NewValue = CheckState.Checked;
+            }
+                for (int i = 0; i < e.Index; i++)
+                {
+                    clbHistory.SetItemChecked(i, true);
+                }
+            
+            for (int j = e.Index; j < clbHistory.Items.Count; j++)
+            {
+                clbHistory.SetItemChecked(j, false);
+            }
+
+            clbHistory.ItemCheck += new ItemCheckEventHandler(clbHistory_ItemCheck);
+
+            //clbHistory.ClearSelected();
+            //for (int i = 0; i < e.Index; i++)
+            //{
+            //    clbHistory.SetItemChecked(i, true);
+            //}
+
         }
 
 
