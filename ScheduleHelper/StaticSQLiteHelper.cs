@@ -210,7 +210,7 @@ namespace ScheduleHelper
 
             //登记修改前的信息以便于恢复
             history_sql = string.Format("update schedule set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", oldTeacherID, classID, dayOfWeek, section);
-            description = string.Format("[强制指定]{0}班 星期{1} 第{2}节",classID,dayOfWeek,section);
+            description = string.Format("[强制指定]{0}班 星期{1} 第{2}节",classID+1,dayOfWeek+1,section+1);
 
             //插入修改记录
             sql = string.Format("insert into history(time,sql,description) values('{0}','{1}','{2}');", DateTime.Now.ToString("f"), history_sql, description);
@@ -309,7 +309,7 @@ namespace ScheduleHelper
 
             //登记修改前的信息以便于恢复
             history_sql = string.Format("update night set teacher_id={0} where class_id={1} and day_of_week={2} and section={3};", oldTeacherID, classID, dayOfWeek, section);
-            description = string.Format("[强制指定 晚自习]{0}班 星期{1} 第{2}节", classID, dayOfWeek, section);
+            description = string.Format("[强制指定 晚自习]{0}班 星期{1} 第{2}节", classID+1, dayOfWeek+1, section+1);
 
             //插入修改记录
             sql = string.Format("insert into history(time,sql,description) values('{0}','{1}','{2}');", DateTime.Now.ToString("f"), history_sql, description);

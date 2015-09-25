@@ -130,7 +130,7 @@ namespace ScheduleHelper
             }
 
             //输出课表的题头
-            ew.Write(0, 0, string.Format("高一年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
+            ew.Write(0, 0, string.Format("高二年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
 
             ew.SaveAs(fileName);
         
@@ -217,7 +217,7 @@ namespace ScheduleHelper
             }
 
             //输出课表的题头
-            ew.Write(0, 0, string.Format("高一年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
+            ew.Write(0, 0, string.Format("高二年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
 
             ew.SaveAs(fileName);
 
