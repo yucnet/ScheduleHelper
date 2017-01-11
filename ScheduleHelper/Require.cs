@@ -267,4 +267,57 @@ namespace ScheduleHelper
         }
     }
 
+
+    /// <summary>
+    /// 保证某学科的课集中安排在某个半天
+    /// </summary>
+    public class SubjectRequire : Require
+    {
+        int sum = 0;
+
+        /// <summary>
+        /// 学科名字
+        /// </summary>
+        public string SubjectName { get; set; }
+        /// <summary>
+        /// 星期
+        /// </summary>
+        public int Week { get; set; }
+
+        public List<int> Weeks { get; set; }
+        /// <summary>
+        /// 是不是安排在上午
+        /// </summary>
+        public bool Forenoon { get; set; }
+
+        public SubjectRequire(string subjectName, List<int>weeks, bool forenoon, int weight)
+        {
+            Weight = weight;
+            SubjectName = subjectName;
+            Weeks = weeks;
+            Forenoon = forenoon;
+        }
+
+        public override int GetWeight(Schedule s)
+        {
+            TeacherSchedule ts = s.TeacherSchedule;
+            foreach(TeacherLessonCollection tlc in ts)
+            {
+                if (Global.GradeTeachers[tlc.TeacherID].SubjectName==SubjectName)
+                {
+                    foreach (TeacherLesson tl in tlc)
+                    {
+                        if (Weeks.Contains(tl.DayOfWeek) && tl.Forenoon)
+                        {
+                            sum += Weight;
+                        }
+                }
+
+                }
+            }
+
+            return sum;
+        }
+
+    }
 }

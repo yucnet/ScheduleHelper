@@ -39,6 +39,7 @@
             this.基础数据管理BToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiChangeTeacher = new System.Windows.Forms.ToolStripMenuItem();
             this.tsmiImportNightWork = new System.Windows.Forms.ToolStripMenuItem();
+            this.tsmiCheck = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -66,14 +67,14 @@
             // tsmiImport
             // 
             this.tsmiImport.Name = "tsmiImport";
-            this.tsmiImport.Size = new System.Drawing.Size(152, 22);
+            this.tsmiImport.Size = new System.Drawing.Size(115, 22);
             this.tsmiImport.Text = "导入(&I)";
             this.tsmiImport.Click += new System.EventHandler(this.tsmiImport_Click);
             // 
             // tsmiExport
             // 
             this.tsmiExport.Name = "tsmiExport";
-            this.tsmiExport.Size = new System.Drawing.Size(152, 22);
+            this.tsmiExport.Size = new System.Drawing.Size(115, 22);
             this.tsmiExport.Text = "导出(&E)";
             this.tsmiExport.Click += new System.EventHandler(this.tsmiExport_Click);
             // 
@@ -82,7 +83,8 @@
             this.管理课表MToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tsmiViewSchdule,
             this.tsmiViewTeacherSchedule,
-            this.tsmiGeneriate});
+            this.tsmiGeneriate,
+            this.tsmiCheck});
             this.管理课表MToolStripMenuItem.Name = "管理课表MToolStripMenuItem";
             this.管理课表MToolStripMenuItem.Size = new System.Drawing.Size(88, 21);
             this.管理课表MToolStripMenuItem.Text = "管理课表(&M)";
@@ -130,6 +132,13 @@
             this.tsmiImportNightWork.Size = new System.Drawing.Size(152, 22);
             this.tsmiImportNightWork.Text = "导入晚自习";
             // 
+            // tsmiCheck
+            // 
+            this.tsmiCheck.Name = "tsmiCheck";
+            this.tsmiCheck.Size = new System.Drawing.Size(152, 22);
+            this.tsmiCheck.Text = "检查课表";
+            this.tsmiCheck.Click += new System.EventHandler(this.tsmiCheck_Click);
+            // 
             // FormMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -162,5 +171,6 @@
         private System.Windows.Forms.ToolStripMenuItem tsmiChangeTeacher;
         private System.Windows.Forms.ToolStripMenuItem tsmiViewTeacherSchedule;
         private System.Windows.Forms.ToolStripMenuItem tsmiImportNightWork;
+        private System.Windows.Forms.ToolStripMenuItem tsmiCheck;
     }
 }

@@ -128,7 +128,7 @@ namespace ScheduleHelper
                     loadClassSchedule(currentClassID);
                 });
                 ll.Visible = true;
-                ll.Location = new Point(46 * ((ci-1)%15)+40, 20*((ci-1)/15)+30);
+                ll.Location = new Point(46 * ((ci-1)%12)+40, 20*((ci-1)/12)+30);
                 groupBox1.Controls.Add(ll);
                 
             }

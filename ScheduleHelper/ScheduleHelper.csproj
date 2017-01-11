@@ -128,11 +128,11 @@
     <Compile Include="FormMain.Designer.cs">
       <DependentUpon>FormMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="FormRecovery.cs">
+    <Compile Include="FormCheck.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="FormRecovery.Designer.cs">
-      <DependentUpon>FormRecovery.cs</DependentUpon>
+    <Compile Include="FormCheck.Designer.cs">
+      <DependentUpon>FormCheck.cs</DependentUpon>
     </Compile>
     <Compile Include="FormReport.cs">
       <SubType>Form</SubType>
@@ -176,8 +176,8 @@
     <EmbeddedResource Include="FormMain.resx">
       <DependentUpon>FormMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FormRecovery.resx">
-      <DependentUpon>FormRecovery.cs</DependentUpon>
+    <EmbeddedResource Include="FormCheck.resx">
+      <DependentUpon>FormCheck.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FormReport.resx">
       <DependentUpon>FormReport.cs</DependentUpon>
@@ -230,6 +230,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="bin\Debug\query.xml" />
     <Content Include="schedule_128px_27011_easyicon.net.ico" />
     <Content Include="schedule_32px_27011_easyicon.net.ico" />
   </ItemGroup>

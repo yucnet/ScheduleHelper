@@ -56,6 +56,9 @@
             this.dgv.AllowUserToDeleteRows = false;
             this.dgv.AllowUserToResizeColumns = false;
             this.dgv.AllowUserToResizeRows = false;
+            this.dgv.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dgv.ClipboardCopyMode = System.Windows.Forms.DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
             dataGridViewCellStyle1.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
             dataGridViewCellStyle1.BackColor = System.Drawing.SystemColors.Control;
@@ -84,7 +87,7 @@
             this.dgv.RowHeadersWidthSizeMode = System.Windows.Forms.DataGridViewRowHeadersWidthSizeMode.DisableResizing;
             this.dgv.RowTemplate.Height = 23;
             this.dgv.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dgv.Size = new System.Drawing.Size(668, 397);
+            this.dgv.Size = new System.Drawing.Size(671, 397);
             this.dgv.TabIndex = 0;
             this.dgv.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgv_CellDoubleClick);
             this.dgv.CellMouseClick += new System.Windows.Forms.DataGridViewCellMouseEventHandler(this.dgv_CellMouseClick);
@@ -92,18 +95,21 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Location = new System.Drawing.Point(12, 416);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(668, 86);
+            this.groupBox1.Size = new System.Drawing.Size(671, 86);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "班级列表";
             // 
             // groupBox2
             // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.rbReforce);
             this.groupBox2.Controls.Add(this.rbExchange);
-            this.groupBox2.Location = new System.Drawing.Point(696, 15);
+            this.groupBox2.Location = new System.Drawing.Point(706, 11);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(289, 51);
             this.groupBox2.TabIndex = 2;
@@ -113,7 +119,7 @@
             // rbReforce
             // 
             this.rbReforce.AutoSize = true;
-            this.rbReforce.Location = new System.Drawing.Point(206, 20);
+            this.rbReforce.Location = new System.Drawing.Point(186, 20);
             this.rbReforce.Name = "rbReforce";
             this.rbReforce.Size = new System.Drawing.Size(71, 16);
             this.rbReforce.TabIndex = 1;
@@ -125,7 +131,7 @@
             // rbExchange
             // 
             this.rbExchange.AutoSize = true;
-            this.rbExchange.Location = new System.Drawing.Point(51, 20);
+            this.rbExchange.Location = new System.Drawing.Point(40, 20);
             this.rbExchange.Name = "rbExchange";
             this.rbExchange.Size = new System.Drawing.Size(71, 16);
             this.rbExchange.TabIndex = 0;
@@ -136,6 +142,7 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tslConflict,
             this.toolStripStatusLabel2,
@@ -143,7 +150,7 @@
             this.tslExchange});
             this.statusStrip.Location = new System.Drawing.Point(0, 506);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(997, 22);
+            this.statusStrip.Size = new System.Drawing.Size(1018, 22);
             this.statusStrip.TabIndex = 3;
             this.statusStrip.Text = "statusStrip1";
             // 
@@ -179,13 +186,15 @@
             // 
             // cmsMenu
             // 
+            this.cmsMenu.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.cmsMenu.Name = "cmsMenu";
             this.cmsMenu.Size = new System.Drawing.Size(61, 4);
             this.cmsMenu.ItemClicked += new System.Windows.Forms.ToolStripItemClickedEventHandler(this.cmsMenu_ItemClicked);
             // 
             // btnCancle
             // 
-            this.btnCancle.Location = new System.Drawing.Point(696, 83);
+            this.btnCancle.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCancle.Location = new System.Drawing.Point(706, 79);
             this.btnCancle.Name = "btnCancle";
             this.btnCancle.Size = new System.Drawing.Size(111, 23);
             this.btnCancle.TabIndex = 4;
@@ -195,9 +204,10 @@
             // 
             // clbHistory
             // 
+            this.clbHistory.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.clbHistory.CheckOnClick = true;
             this.clbHistory.FormattingEnabled = true;
-            this.clbHistory.Location = new System.Drawing.Point(698, 112);
+            this.clbHistory.Location = new System.Drawing.Point(708, 108);
             this.clbHistory.Name = "clbHistory";
             this.clbHistory.Size = new System.Drawing.Size(287, 388);
             this.clbHistory.TabIndex = 5;
@@ -207,7 +217,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(997, 528);
+            this.ClientSize = new System.Drawing.Size(1018, 528);
             this.Controls.Add(this.clbHistory);
             this.Controls.Add(this.btnCancle);
             this.Controls.Add(this.statusStrip);

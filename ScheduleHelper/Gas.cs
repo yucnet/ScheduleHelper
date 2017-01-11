@@ -87,10 +87,10 @@ namespace ScheduleHelper
         private void LoadRequire()
         {
             //班主任周一的第7节都不安排
-            _requestCollection.Add(new MasterRequire(-1, true, "", -1, 0, 6, false,100));
+            _requestCollection.Add(new MasterRequire(-1, true, "", -1, 0, 6, false, 100));
 
             //班主任的周六的第7节都安排
-            _requestCollection.Add(new MasterRequire(-1, true, "", -1, 5, 6, true,300));
+            _requestCollection.Add(new MasterRequire(-1, true, "", -1, 5, 6, true, 300));
 
             //尽量不冲突
             _requestCollection.Add(new ConflictRequire(3));
@@ -102,7 +102,7 @@ namespace ScheduleHelper
             _requestCollection.Add(new FairRequire(200));
 
             //所有教师都不上周五第七节课
-            _requestCollection.Add(new TeacherRequire(-1, 4, 6, false,3));
+            _requestCollection.Add(new TeacherRequire(-1, 4, 6, false, 3));
             _requestCollection.Add(new TeacherRequire(-1, 2, 6, false, 3));
             _requestCollection.Add(new TeacherRequire(-1, 0, 6, false, 3));
 
@@ -149,11 +149,11 @@ namespace ScheduleHelper
                     s = new Schedule(Global.ClassCount);
                     for (int j = 0; j < f; j++)
                     {
-                        s[j] = new ClassSchedule(_selectedSchedule[first]);
+                        s[j] = new ClassSchedule(_selectedSchedule[first],Global.DayPerWeek,Global.LessonPerDay);
                     }
                     for (int j = f; j < Global.ClassCount; j++)
                     {
-                        s[j] = new ClassSchedule(_selectedSchedule[second]);
+                        s[j] = new ClassSchedule(_selectedSchedule[second],Global.DayPerWeek,Global.LessonPerDay);
                     }
                     s.Dirty();
                 }

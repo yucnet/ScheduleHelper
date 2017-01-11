@@ -43,7 +43,7 @@ namespace ScheduleHelper
 
                 LessonPerForenoon = 4;          //上午安排的节数
 
-                NightLessonPerDay = 2;     //晚自习安排的节数
+                NightLessonPerDay = 3;     //晚自习安排的节数
 
             //-------------------------------------------------------------------------------------
                 if (!_empty)

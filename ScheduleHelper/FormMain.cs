@@ -63,5 +63,11 @@ namespace ScheduleHelper
             fr.MdiParent = this;
             fr.Show();
         }
+
+        private void tsmiCheck_Click(object sender, EventArgs e)
+        {
+            FormCheck formCheck = new FormCheck();
+            formCheck.Show();
+        }
     }
 }

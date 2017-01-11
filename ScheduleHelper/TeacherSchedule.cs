@@ -23,8 +23,14 @@ namespace ScheduleHelper
         {
             get
             {
-
-                return _teacherLessonCollectionDictionary[teacherID];
+                if (_teacherLessonCollectionDictionary.ContainsKey(teacherID))
+                {
+                    return _teacherLessonCollectionDictionary[teacherID];
+                }
+                else
+                {
+                    return null;
+                }
             }
 
 
@@ -412,6 +418,25 @@ namespace ScheduleHelper
             }
             return sb.ToString(0, sb.Length - 1);
         }
+
+        public bool Forenoon
+        {
+            get {
+                if (this.Section < Global.LessonPerForenoon)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+
+            }
+
+        }
+
+
+
 
         /// <summary>
         /// 返回教师班级名字列表的字符串版本

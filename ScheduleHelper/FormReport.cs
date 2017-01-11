@@ -47,7 +47,7 @@ namespace ScheduleHelper
                     {
                         startColumn = 0; 
                     }
-                    startRow = ((ds.DayOfWeek) / 2) * (Global.LessonPerDay + 4)+2;
+                    startRow = ((ds.DayOfWeek) / 2) * (Global.LessonPerDay + 2 + Global.NightLessonPerDay) + Global.NightLessonPerDay-1;
                     ew.Write(startRow, cs.ClassID + startColumn+1, cs.ClassID+1);
                     foreach (Lesson l in ds)
                     {
@@ -77,7 +77,7 @@ namespace ScheduleHelper
                         {
                             startColumn = 0;
                         }
-                        startRow = ((ds.DayOfWeek) / 2) * (Global.LessonPerDay + 4) + 2;
+                        startRow = ((ds.DayOfWeek) / 2) * (Global.LessonPerDay + 2 + Global.NightLessonPerDay) + Global.NightLessonPerDay-1;
                         ew.Write(startRow, cs.ClassID + startColumn + 1, cs.ClassID + 1);
                         foreach (Lesson l in ds)
                         {
@@ -103,7 +103,7 @@ namespace ScheduleHelper
 
             //合并标题行
             ew.MergeCells(0, 0, 0, Global.ClassCount * 2 + 2);
-            ew.MergeCells(1, Global.ClassCount + 1, Global.DayPerWeek / 2 * (Global.LessonPerDay + 4), Global.ClassCount + 1);
+            ew.MergeCells(1, Global.ClassCount + 1, Global.DayPerWeek / 2 * (Global.LessonPerDay + 2+ Global.NightLessonPerDay), Global.ClassCount + 1);
             for (int i = 0; i < Global.DayPerWeek; i++)
             {
                 if (i % 2 == 0)
@@ -114,12 +114,12 @@ namespace ScheduleHelper
                 {
                     startColumn = Global.ClassCount + 2;
                 }
-                startRow = (i / 2) * (Global.LessonPerDay + 4) + 1;
+                startRow = (i / 2) * (Global.LessonPerDay + 2+ Global.NightLessonPerDay) + Global.NightLessonPerDay-2;
                 ew.Write(startRow, startColumn, week[i]);
                 ew.MergeCells(startRow, startColumn, startRow, startColumn + Global.ClassCount );
             }
             //显示边框
-            for (int r = 0; r < Global.DayPerWeek / 2 * (Global.LessonPerDay + 4)+1; r++)
+            for (int r = 0; r < Global.DayPerWeek / 2 * (Global.LessonPerDay + 2 + Global.NightLessonPerDay) +1; r++)
             {
                 for (int c = 0; c < Global.ClassCount * 2 + 3; c++)
                 {
@@ -130,8 +130,9 @@ namespace ScheduleHelper
             }
 
             //输出课表的题头
-            ew.Write(0, 0, string.Format("高二年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
-
+            ew.Write(0, 0, string.Format("高三年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
+            ew.CurrentSheet.PrintSetup.PaperSize = 9;
+            ew.CurrentSheet.PrintSetup.Landscape = true;
             ew.SaveAs(fileName);
         
         }
@@ -147,7 +148,7 @@ namespace ScheduleHelper
                 foreach (DaySchedule ds in cs)
                 {
                      startColumn = 0;
-                    startRow = (ds.DayOfWeek) * (Global.LessonPerDay + 4) + 2;
+                    startRow = (ds.DayOfWeek) * (Global.LessonPerDay + 2 + Global.NightLessonPerDay) + Global.NightLessonPerDay-1;
 
                     ew.Write(startRow, cs.ClassID + startColumn + 1, cs.ClassID + 1);
                     foreach (Lesson l in ds)
@@ -171,7 +172,7 @@ namespace ScheduleHelper
                     {
                         startColumn = 0;
 
-                        startRow = (ds.DayOfWeek) * (Global.LessonPerDay + 4) + 2;
+                        startRow = (ds.DayOfWeek) * (Global.LessonPerDay + 2 + Global.NightLessonPerDay) + Global.NightLessonPerDay - 1;
                         ew.Write(startRow, cs.ClassID + startColumn + 1, cs.ClassID + 1);
                         foreach (Lesson l in ds)
                         {
@@ -203,12 +204,12 @@ namespace ScheduleHelper
             for (int i = 0; i < Global.DayPerWeek; i++)
             {
                 startColumn = 0;
-                startRow = i* (Global.LessonPerDay + 4) + 1;
+                startRow = i* (Global.LessonPerDay + 2 + Global.NightLessonPerDay) + Global.NightLessonPerDay - 2;
                 ew.Write(startRow, startColumn, week[i]);
                 ew.MergeCells(startRow, startColumn, startRow, startColumn + Global.ClassCount);
             }
             //显示边框
-            for (int r = 0; r < Global.DayPerWeek * (Global.LessonPerDay + 4) + 1; r++)
+            for (int r = 0; r < Global.DayPerWeek * (Global.LessonPerDay + 2 + Global.NightLessonPerDay) + Global.NightLessonPerDay-1; r++)
             {
                 for (int c = 0; c < Global.ClassCount  + 1; c++)
                 {
@@ -217,8 +218,8 @@ namespace ScheduleHelper
             }
 
             //输出课表的题头
-            ew.Write(0, 0, string.Format("高二年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
-
+            ew.Write(0, 0, string.Format("高三年级课表({0})", DateTime.Now.Date.ToString("yyyy年M月d日")));
+            ew.CurrentSheet.PrintSetup.PaperSize = 9;
             ew.SaveAs(fileName);
 
         }
@@ -270,7 +271,7 @@ namespace ScheduleHelper
 
                 }
             }
-
+            ew.CurrentSheet.PrintSetup.PaperSize = 9;
             ew.SaveAs(fileName);
         }
 
@@ -300,8 +301,8 @@ namespace ScheduleHelper
                     {
                         continue;
                     }
-                    ew.Write(i * 12, 0, Global.GradeTeachers[ti].Name);
-                    start_row = i * 12 + 1;
+                    ew.Write(i * (Global.LessonPerDay + Global.NightLessonPerDay + 3), 0, Global.GradeTeachers[ti].Name);
+                    start_row = i * (Global.LessonPerDay+Global.NightLessonPerDay+3) + 1;
                     start_column = 0;
                     for (int w = 0; w < Global.DayPerWeek; w++)
                     {
@@ -319,6 +320,7 @@ namespace ScheduleHelper
                             ew.Write(start_row + sec, 0, sec.ToString());
                         }
                     }
+  
                    foreach (TeacherLesson tl in _schedule.TeacherSchedule[ti])
                    {
                       ew.Write(start_row + tl.Section+1, start_column + tl.DayOfWeek+1, tl.ClassNameListString);
